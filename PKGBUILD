@@ -14,7 +14,7 @@ options=(!debug !strip)
 
 build(){
    cd $startdir
-   cargo build --release
+   CFLAGS="" cargo build --release
 }
 
 package() {
