@@ -5,9 +5,12 @@ pub fn init() -> Command {
         .short("A CLI for BakeryOS")
         .subcommand(system::init())
         .subcommand(pkg::init())
+        .subcommand(desktop::init())
         .build()
 }
 
+mod desktop;
+mod desktop_setup;
 mod pkg;
 mod pkg_install;
 mod pkg_uninstall;
