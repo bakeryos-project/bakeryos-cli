@@ -1,4 +1,6 @@
+use reqwest::Client;
 use serde::Deserialize;
+use std::error::Error;
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -43,11 +45,12 @@ pub async fn setup_desktop() -> Result<(), Box<dyn std::error::Error>> {
 
     for &extension_id in GNOME_EXTENSIONS {
         let version = match get_latest_version(&client, extension_id).await {
-            Some(v) => {
+            Ok(v) => {
                 println!("Detected the latest version: {}", v);
                 v
             }
-            None => {
+            Err(e) => {
+                println!("Error: {}", e.to_string());
                 println!("Skipping: No version found for {}", extension_id);
                 continue;
             }
@@ -70,35 +73,50 @@ pub async fn setup_desktop() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-async fn get_latest_version(client: &reqwest::Client, extension_id: &str) -> Option<i32> {
+async fn get_latest_version(client: &Client, extension_id: &str) -> Result<i32, Box<dyn Error>> {
     let page_size = 20;
     let api_url = format!(
         "https://extensions.gnome.org/api/v1/extensions/{}/versions/?page_size={}",
         extension_id, page_size
     );
 
-    let response = client.get(&api_url).send().await.ok()?;
-    let data: GnomeApiResponse = response.json().await.ok()?;
+    let response = client.get(&api_url).send().await?;
+
+    if !response.status().is_success() {
+        return Err(format!("HTTP status: {}", response.status()).into());
+    }
+
+    let data: GnomeApiResponse = response.json().await?;
 
     let count = data.count;
     if count == 0 {
-        return None;
+        return Err("No version found for this extension (count = 0)".into());
     }
 
     let total_pages = ((count as f64) / (page_size as f64)).ceil() as i32;
-
     let final_data = if total_pages > 1 {
         let last_page_url = format!(
             "https://extensions.gnome.org/api/v1/extensions/{}/versions/?page_size={}&page={}",
             extension_id, page_size, total_pages
         );
-        let resp = client.get(&last_page_url).send().await.ok()?;
-        resp.json::<GnomeApiResponse>().await.ok()?
+        let resp = client.get(&last_page_url).send().await?;
+
+        if !resp.status().is_success() {
+            return Err(format!("HTTP error: {}", resp.status()).into());
+        }
+
+        resp.json::<GnomeApiResponse>().await?
     } else {
         data
     };
 
-    final_data.results.last().map(|v| v.version)
+    let latest_version = final_data
+        .results
+        .last()
+        .ok_or("The returned result list is empty even though the count is greater than 0.")?
+        .version;
+
+    Ok(latest_version)
 }
 
 async fn download_extension(
