@@ -1,6 +1,6 @@
 use flag_rs::{Command, CommandBuilder};
 
-use crate::tasks::system::restart;
+use crate::helpers::system::restart;
 
 pub fn init() -> Command {
     CommandBuilder::new("restart")

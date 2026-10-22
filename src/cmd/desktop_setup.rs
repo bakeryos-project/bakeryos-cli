@@ -1,6 +1,6 @@
 use flag_rs::{Command, CommandBuilder};
 
-use crate::tasks::desktop::setup_desktop;
+use crate::helpers::desktop::setup_desktop;
 
 pub fn init() -> Command {
     CommandBuilder::new("setup")

@@ -6,11 +6,20 @@ pub fn init() -> Command {
         .subcommand(system::init())
         .subcommand(pkg::init())
         .subcommand(desktop::init())
+        .subcommand(dev_toolbox::init())
+        .subcommand(update::init())
+        .subcommand(device::init())
         .build()
 }
 
 mod desktop;
 mod desktop_setup;
+mod dev_toolbox;
+mod dev_toolbox_check;
+mod dev_toolbox_install;
+mod dev_toolbox_open;
+mod device;
+mod device_scan;
 mod pkg;
 mod pkg_install;
 mod pkg_uninstall;
@@ -19,3 +28,4 @@ mod system_restart;
 mod system_shutdown;
 mod system_status;
 mod system_update;
+mod update;

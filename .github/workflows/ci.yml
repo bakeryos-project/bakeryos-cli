@@ -1,3 +1,4 @@
+
 name: CI
 
 on:
@@ -7,6 +8,9 @@ on:
 
 jobs:
   call-build-workflow:
+    if: >-
+      !startsWith(github.event.head_commit.message, 'chore:')
+      && !startsWith(github.event.head_commit.message, 'chore(')
     uses: bakeryos-project/ci/.github/workflows/build-package.yml@main
     secrets:
       DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}

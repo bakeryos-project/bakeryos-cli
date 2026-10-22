@@ -85,6 +85,7 @@ version = "0.1.0"
 dependencies = [
  "argh",
  "flag-rs",
+ "pciid-parser",
  "reqwest",
  "serde",
  "serde_json",
@@ -375,7 +376,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
 dependencies = [
  "libc",
- "windows-sys 0.52.0",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -1038,6 +1039,12 @@ dependencies = [
  "password-hash",
  "sha2",
 ]
+
+[[package]]
+name = "pciid-parser"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "978d5ddc523f0b9c63a3ccc75aef5b924962edf2097dd48f5b991df2951482f3"
 
 [[package]]
 name = "percent-encoding"

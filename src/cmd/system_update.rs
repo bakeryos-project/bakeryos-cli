@@ -1,6 +1,6 @@
 use flag_rs::{Command, CommandBuilder};
 
-use crate::tasks::system::update_system;
+use crate::helpers::system::update_system;
 
 pub fn init() -> Command {
     CommandBuilder::new("update")

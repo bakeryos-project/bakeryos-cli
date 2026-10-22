@@ -1,6 +1,6 @@
 use flag_rs::{Command, CommandBuilder};
 
-use crate::tasks::system::system_status;
+use crate::helpers::system::system_status;
 
 pub fn init() -> Command {
     CommandBuilder::new("status")

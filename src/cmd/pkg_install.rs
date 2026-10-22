@@ -1,4 +1,4 @@
-use crate::tasks::pkg::install;
+use crate::helpers::pkg::install;
 use flag_rs::{Command, CommandBuilder, Flag, FlagType, FlagValue};
 
 pub fn init() -> Command {

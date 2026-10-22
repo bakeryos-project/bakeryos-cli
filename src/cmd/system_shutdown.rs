@@ -1,6 +1,6 @@
 use flag_rs::{Command, CommandBuilder};
 
-use crate::tasks::system::shutdown;
+use crate::helpers::system::shutdown;
 
 pub fn init() -> Command {
     CommandBuilder::new("shutdown")
