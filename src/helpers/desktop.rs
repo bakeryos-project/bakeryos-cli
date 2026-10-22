@@ -160,9 +160,11 @@ fn extract_and_chmod(
 
     for i in 0..archive.len() {
         let mut file_in_zip = archive.by_index(i)?;
-        let outpath = target_ext_dir.join(file_in_zip.name());
+        let filename = file_in_zip.name().expect("Failed");
 
-        if file_in_zip.name().ends_with('/') {
+        let outpath = target_ext_dir.join(filename.as_ref());
+
+        if filename.ends_with('/') {
             fs::create_dir_all(&outpath)?;
         } else {
             if let Some(p) = outpath.parent() {
