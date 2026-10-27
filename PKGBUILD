@@ -1,7 +1,7 @@
 # Maintainer: smtdfc <me.smtdfc@gmail.com>
 pkgname=bakeryos-cli
 pkgver=0.0.3
-pkgrel=2
+pkgrel=3
 pkgdesc="CLI for BakeryOS"
 arch=('x86_64')
 url="https://github.com/bakeryos-project/bakeryos-cli"
