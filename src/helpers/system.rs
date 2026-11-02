@@ -27,14 +27,14 @@ pub fn restart() -> Result<(), String> {
 }
 
 pub fn system_status() -> Result<(), String> {
-    let mut sys = System::new_all();
+    let mut sys = System::new_all().map_err(|e| e.to_string())?;
     sys.refresh_all();
 
-    let os_name = System::name().unwrap_or_else(|| "Unknown OS".to_string());
-    let os_version = System::os_version().unwrap_or_else(|| "Unknown Version".to_string());
-    let kernel_version = System::kernel_version().unwrap_or_else(|| "Unknown Kernel".to_string());
-    let host_name = System::host_name().unwrap_or_else(|| "Unknown Host".to_string());
-    let uptime = System::uptime();
+    let os_name = System::name().unwrap_or_else(|_| "Unknown OS".to_string());
+    let os_version = System::os_version().unwrap_or_else(|_| "Unknown Version".to_string());
+    let kernel_version = System::kernel_version().unwrap_or_else(|_| "Unknown Kernel".to_string());
+    let host_name = System::host_name().unwrap_or_else(|_| "Unknown Host".to_string());
+    let uptime = System::uptime().map_err(|e| e.to_string())?;
     let hours = uptime / 3600;
     let minutes = (uptime % 3600) / 60;
     let seconds = uptime % 60;
@@ -100,13 +100,13 @@ pub fn system_status() -> Result<(), String> {
         println!(
             "      Core {:2} | Usage: {:5.1}% | Freq: {} MHz",
             i,
-            cpu.cpu_usage(),
+            cpu.usage(),
             cpu.frequency()
         );
     }
     println!("------------------------------------------");
 
-    let disks = Disks::new_with_refreshed_list();
+    let disks = Disks::new_with_refreshed_list().map_err(|e| e.to_string())?;
     println!("DISK STORAGE:");
     for disk in &disks {
         let total_space = disk.total_space();
