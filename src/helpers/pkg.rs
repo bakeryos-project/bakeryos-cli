@@ -87,3 +87,12 @@ where
         _ => Err("Invalid source".to_string()),
     }
 }
+
+pub fn is_install(package: &str) -> Result<bool, String> {
+    let mut cmd = create_command("pacman", ["-Q", package]);
+
+    let mut child = cmd.spawn().map_err(|e| e.to_string())?;
+    let status = child.wait().map_err(|e| e.to_string())?;
+
+    Ok(status.success())
+}

@@ -1,4 +1,7 @@
-use crate::helpers::device::{PciDevice, find_unbound_devices, scan_pci_devices};
+use crate::{
+    helpers::device::{find_unbound_devices, scan_pci_devices, PciDevice},
+    utils::style::{bold, cyan, dim, divider, green, print_header, red, yellow},
+};
 use flag_rs::{Command, CommandBuilder, Flag, FlagType, FlagValue};
 
 pub fn init() -> Command {
@@ -17,7 +20,15 @@ pub fn init() -> Command {
                 .and_then(|s| s.parse::<bool>().ok())
                 .unwrap_or(false);
             let devices = scan_pci_devices()?;
-            println!("Detected {} PCI devices", devices.len());
+
+            print_header(
+                "BakeryOS Hardware Scanner",
+                Some(&format!(
+                    "Discovered {} total PCI device(s){}",
+                    devices.len(),
+                    if unbound { " (filtered: unbound only)" } else { "" }
+                )),
+            );
 
             let mut filtered_devices: Vec<&PciDevice> = devices.iter().collect();
             if unbound {
@@ -25,27 +36,32 @@ pub fn init() -> Command {
             }
 
             for device in filtered_devices {
-                println!(
-                    "{}: {} {}",
-                    device.address,
-                    device.vendor_name.as_deref().unwrap_or("Unknown vendor"),
-                    device.device_name.as_deref().unwrap_or("Unknown device"),
-                );
+                let vendor = device.vendor_name.as_deref().unwrap_or("Unknown vendor");
+                let dev_name = device.device_name.as_deref().unwrap_or("Unknown device");
+                let class_desc = device.class_name.as_deref().unwrap_or("Unknown class");
+
+                let driver_status = match device.driver.as_deref() {
+                    Some(drv) => green(format!("Bound to [{drv}]")),
+                    None => red("Not bound (No driver)"),
+                };
 
                 println!(
-                    "  Class:  {} ({})",
-                    device.class_name.as_deref().unwrap_or("Unknown class"),
-                    device.class,
+                    "{} {}",
+                    cyan(bold(&device.address)),
+                    bold(format!("{vendor} {dev_name}"))
                 );
-
-                println!("  Vendor: {}", device.vendor_id);
-                println!("  Device: {}", device.device_id);
-
+                println!("   ├─ {}: {} ({})", dim("Class"), class_desc, dim(&device.class));
                 println!(
-                    "  Driver: {}",
-                    device.driver.as_deref().unwrap_or("Not bound"),
+                    "   ├─ {}: {} | {}: {}",
+                    dim("Vendor ID"),
+                    yellow(&device.vendor_id),
+                    dim("Device ID"),
+                    yellow(&device.device_id)
                 );
+                println!("   └─ {}: {}\n", dim("Driver"), driver_status);
             }
+
+            println!("{}", divider(56));
 
             Ok(())
         })

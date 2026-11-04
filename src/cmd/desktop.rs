@@ -7,3 +7,4 @@ pub fn init() -> Command {
         .short("Desktop commands")
         .build()
 }
+

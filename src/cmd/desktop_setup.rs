@@ -1,6 +1,6 @@
 use flag_rs::{Command, CommandBuilder};
 
-use crate::helpers::desktop::setup_desktop;
+use crate::{helpers::desktop::setup_desktop, utils::style::green};
 
 pub fn init() -> Command {
     CommandBuilder::new("setup")
@@ -9,14 +9,12 @@ pub fn init() -> Command {
                 "Downloads and installs one or more specified software packages along with their required dependencies. Requires administrator privileges."
             )
             .run(|_|{
-                let rt = tokio::runtime::Runtime::new()
-                    .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e.to_string()))?;
+                if let Err(e) = setup_desktop() {
+                    eprintln!("Error: {}", e);
+                }else{
+                     print!("{} \n", green("Success"));
+                }
 
-                rt.block_on(async {
-                    if let Err(e) = setup_desktop().await {
-                        eprintln!("Error: {}", e);
-                    }
-                });
                 Ok(())
             })
             .build()

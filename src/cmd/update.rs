@@ -1,58 +1,61 @@
 use std::io::{self, Write};
 
-use crate::helpers::{
-    system::update_system,
-    update::{
-        install_bakeryos_update_gui, is_bakeryos_update_gui_installed, try_bakeryos_update_gui,
+use crate::{
+    helpers::{
+        system::update_system,
+        update::{
+            install_bakeryos_update_gui, is_bakeryos_update_gui_installed, try_bakeryos_update_gui,
+        },
     },
+    utils::style::{bold, cyan, fail_badge, green, info_badge, pass_badge, red, warn_badge, yellow},
 };
 use flag_rs::{Command, CommandBuilder, Flag, FlagType, FlagValue};
 
 fn open_in_gui() -> Result<(), String> {
-    println!("Checking package...");
+    println!("{} Checking package status...", info_badge());
 
     match is_bakeryos_update_gui_installed() {
         Ok(true) => {
-            println!("BakeryOS Update GUI is installed.");
+            println!("{} BakeryOS Update GUI is installed.", pass_badge());
             let _ = try_bakeryos_update_gui();
         }
         Ok(false) => {
-            println!("BakeryOS Update GUI is not installed.");
-            print!("Do you want to install it now? [y/N] ");
+            println!("{} BakeryOS Update GUI is not installed.", warn_badge());
+            print!("{} Do you want to install it now? [y/N]: ", bold(yellow("?")));
 
             if let Err(err) = io::stdout().flush() {
-                eprintln!("Failed to flush stdout: {err}");
+                eprintln!("{} Failed to flush stdout: {err}", fail_badge());
                 return Ok(());
             }
 
             let mut input = String::new();
 
             if let Err(err) = io::stdin().read_line(&mut input) {
-                eprintln!("Failed to read input: {err}");
+                eprintln!("{} Failed to read input: {err}", fail_badge());
                 return Ok(());
             }
 
             if matches!(input.trim().to_lowercase().as_str(), "y" | "yes") {
-                println!("Installing BakeryOS Update GUI Toolbox...");
+                println!("{} Installing BakeryOS Update GUI Toolbox...", info_badge());
 
                 match install_bakeryos_update_gui() {
                     Ok(true) => {
-                        println!("Installation completed.");
+                        println!("{} Installation completed successfully.", pass_badge());
                         let _ = try_bakeryos_update_gui();
                     }
                     Ok(false) => {
-                        println!("Installation failed or was cancelled.");
+                        println!("{} Installation failed or was cancelled.", fail_badge());
                     }
                     Err(err) => {
-                        eprintln!("Installation error: {err}");
+                        eprintln!("{} Installation error: {err}", fail_badge());
                     }
                 }
             } else {
-                println!("Installation cancelled.");
+                println!("{} Installation cancelled.", cyan("[INFO]"));
             }
         }
         Err(err) => {
-            eprintln!("Error: {err}");
+            eprintln!("{} Error: {err}", fail_badge());
         }
     }
 
@@ -81,10 +84,10 @@ pub fn init() -> Command {
                 let result = update_system();
                 match result {
                     Ok(_) => {
-                        println!("System updated successfully")
+                        println!("{} {}", pass_badge(), green(bold("System updated successfully.")));
                     }
                     Err(e) => {
-                        eprintln!("Error: {}", e)
+                        eprintln!("{} {}", fail_badge(), red(format!("Error: {e}")));
                     }
                 }
                 Ok(())

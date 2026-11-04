@@ -9,6 +9,7 @@ pub fn init() -> Command {
         .subcommand(dev_toolbox::init())
         .subcommand(update::init())
         .subcommand(device::init())
+        .subcommand(doctor::init())
         .build()
 }
 
@@ -20,6 +21,7 @@ mod dev_toolbox_install;
 mod dev_toolbox_open;
 mod device;
 mod device_scan;
+mod doctor;
 mod pkg;
 mod pkg_install;
 mod pkg_uninstall;

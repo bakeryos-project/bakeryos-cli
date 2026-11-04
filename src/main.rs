@@ -7,7 +7,7 @@ fn main() {
     }
 
     if let Err(e) = root.execute(args) {
-        eprintln!("Error: {}", e);
+        eprintln!("{} {}", utils::style::fail_badge(), utils::style::red(e));
         std::process::exit(1);
     }
 }
