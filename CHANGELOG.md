@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.0](https://github.com/bakeryos-project/bakeryos-cli/compare/v0.1.0...v0.2.0) (2026-11-04)
+
+
+### Features
+
+* add doctor command ([cb03689](https://github.com/bakeryos-project/bakeryos-cli/commit/cb036891656721ed2f35185099207731952e0551))
+
+
+### Bug Fixes
+
+* add error-to-string mapping ([2fc28cc](https://github.com/bakeryos-project/bakeryos-cli/commit/2fc28cc613fff7102e74b58807549d78abca0c3d))
+
 ## [0.1.0](https://github.com/bakeryos-project/bakeryos-cli/compare/v0.0.2...v0.1.0) (2026-10-30)
 
 
